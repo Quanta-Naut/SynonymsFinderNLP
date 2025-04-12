@@ -119,7 +119,147 @@ async function searchSimilarWords(word) {
 // Function to display results
 function displayResults(data) {
     resultsContainer.style.display = 'block';
-    const word = data?.word || ""; // use the correct key name
+    
+    // Handle multi-word input results
+    if (data.words && data.words.length > 0) {
+        // Multi-word input
+        searchedWord.textContent = data.input;
+        hideLoading();
+        
+        // Clear previous results
+        synonymsList.innerHTML = '';
+        definitionsList.innerHTML = '';
+        synonymsEmpty.style.display = 'none';
+        definitionsEmpty.style.display = 'none';
+        
+        // Process each word's results - separate for synonyms and definitions
+        data.words.forEach((wordData, index) => {
+            // Create the synonyms section
+            const synWordSection = document.createElement('div');
+            synWordSection.className = 'word-section';
+            
+            // Create word header for synonyms
+            const synWordHeader = document.createElement('h3');
+            synWordHeader.className = 'word-header';
+            synWordHeader.textContent = wordData.word;
+            synWordSection.appendChild(synWordHeader);
+            
+            // Create synonyms section for this word
+            const wordSynonyms = document.createElement('div');
+            wordSynonyms.className = 'word-synonyms';
+            const synonymsTitle = document.createElement('h4');
+            synonymsTitle.textContent = 'Synonyms:';
+            wordSynonyms.appendChild(synonymsTitle);
+            
+            if (wordData.synonyms && wordData.synonyms.length > 0) {
+                const synList = document.createElement('ul');
+                synList.className = 'synonyms-list';
+                
+                wordData.synonyms.forEach(synonym => {
+                    const li = document.createElement('li');
+                    const wordRectangle = document.createElement('div');
+                    wordRectangle.className = 'word-rectangle';
+                    
+                    wordRectangle.innerHTML = `
+                        <span class="word">${synonym}</span>
+                        <i class="fas fa-search search-icon"></i>
+                    `;
+                    
+                    li.appendChild(wordRectangle);
+                    
+                    // Add event listener to search for the word
+                    li.addEventListener('click', () => {
+                        wordInput.value = synonym;
+                        searchSimilarWords(synonym);
+                    });
+                    
+                    synList.appendChild(li);
+                });
+                
+                wordSynonyms.appendChild(synList);
+            } else {
+                const emptySyn = document.createElement('div');
+                emptySyn.className = 'empty-message';
+                emptySyn.innerHTML = '<i class="fas fa-info-circle"></i><p>No synonyms found</p>';
+                wordSynonyms.appendChild(emptySyn);
+            }
+            
+            synWordSection.appendChild(wordSynonyms);
+            
+            // Add a divider if not the last word
+            if (index < data.words.length - 1) {
+                const divider = document.createElement('hr');
+                divider.className = 'word-divider';
+                synWordSection.appendChild(divider);
+            }
+            
+            // Add this word's synonyms to synonymsList
+            synonymsList.appendChild(synWordSection);
+            
+            // Create the definitions section - separate DOM elements
+            const defWordSection = document.createElement('div');
+            defWordSection.className = 'word-section';
+            
+            // Create word header for definitions
+            const defWordHeader = document.createElement('h3');
+            defWordHeader.className = 'word-header';
+            defWordHeader.textContent = wordData.word;
+            defWordSection.appendChild(defWordHeader);
+            
+            // Create definitions section for this word
+            const wordDefinitions = document.createElement('div');
+            wordDefinitions.className = 'word-definitions';
+            
+            if (wordData.definitions && wordData.definitions.length > 0) {
+                wordData.definitions.forEach(definition => {
+                    const definitionItem = document.createElement('div');
+                    definitionItem.className = 'definition-item';
+                    
+                    // Create HTML structure for the definition
+                    let definitionHtml = '';
+                    if (definition.pos) {
+                        definitionHtml += `<div class="definition-pos">${definition.pos}</div>`;
+                    }
+                    
+                    definitionHtml += `<div class="definition-text">${definition.text}</div>`;
+                    
+                    // Add examples if available
+                    if (definition.examples && definition.examples.length > 0) {
+                        definitionHtml += '<div class="definition-examples">';
+                        definition.examples.forEach(example => {
+                            definitionHtml += `<div class="definition-example">${example}</div>`;
+                        });
+                        definitionHtml += '</div>';
+                    }
+                    
+                    definitionItem.innerHTML = definitionHtml;
+                    wordDefinitions.appendChild(definitionItem);
+                });
+            } else {
+                const emptyDef = document.createElement('div');
+                emptyDef.className = 'empty-message';
+                emptyDef.innerHTML = '<i class="fas fa-info-circle"></i><p>No definitions found</p>';
+                wordDefinitions.appendChild(emptyDef);
+            }
+            
+            defWordSection.appendChild(wordDefinitions);
+            
+            // Add a divider if not the last word
+            if (index < data.words.length - 1) {
+                const divider = document.createElement('hr');
+                divider.className = 'word-divider';
+                defWordSection.appendChild(divider);
+            }
+            
+            // Add this word's definitions to definitionsList
+            definitionsList.appendChild(defWordSection);
+        });
+        
+        return;
+    }
+    
+    // Handle single word results (original functionality)
+    const word = data?.word || "";
     searchedWord.textContent = `${word.charAt(0).toUpperCase()}${word.slice(1)}`;
     
     hideLoading();

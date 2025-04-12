@@ -775,3 +775,66 @@ footer {
         background: rgba(255, 255, 255, 0.05);
     }
 }
+
+/* Multi-word results styling */
+.multi-word-results {
+    width: 100%;
+}
+
+.word-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+.word-header {
+    font-size: 1.2rem;
+    color: var(--accent-color);
+    margin-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 8px;
+}
+
+.word-divider {
+    border: none;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 15px 0;
+}
+
+.word-definitions {
+    margin-bottom: 15px;
+}
+
+.word-synonyms h4 {
+    font-size: 1rem;
+    color: var(--light-text-color);
+    margin-bottom: 10px;
+}
+
+/* Adjustments for results display */
+#synonymsList .multi-word-results,
+#definitionsList .multi-word-results {
+    max-height: 600px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent-color) rgba(0, 0, 0, 0.2);
+}
+
+#synonymsList .multi-word-results::-webkit-scrollbar,
+#definitionsList .multi-word-results::-webkit-scrollbar {
+    width: 6px;
+}
+
+#synonymsList .multi-word-results::-webkit-scrollbar-thumb,
+#definitionsList .multi-word-results::-webkit-scrollbar-thumb {
+    background-color: var(--accent-color);
+    border-radius: 3px;
+}
+
+#synonymsList .multi-word-results::-webkit-scrollbar-track,
+#definitionsList .multi-word-results::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}

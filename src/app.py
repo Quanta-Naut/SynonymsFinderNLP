@@ -144,30 +144,55 @@ def index():
 
 @app.route('/process', methods=['POST'])
 def process():
-    """Process the word and return similar words"""
+    """Process the word(s) and return similar words"""
     start_time = time.time()
     data = request.get_json()
-    word = data.get('word', '').lower().strip()
+    input_text = data.get('word', '').lower().strip()
     
-    if not word:
+    if not input_text:
         return jsonify({'error': 'No word provided'})
     
     try:
-        # Get synonyms using WordNet (cached)
-        synonyms = get_synonyms(word)
+        # Split the input into words (support multi-word inputs)
+        words = input_text.split()
+        result = {}
         
-        # Get definitions using WordNet (cached)
-        definitions = get_definitions(word)
+        # If there's only one word, process it normally
+        if len(words) == 1:
+            word = words[0]
+            # Get synonyms using WordNet (cached)
+            synonyms = get_synonyms(word)
+            
+            # Get definitions using WordNet (cached)
+            definitions = get_definitions(word)
+            
+            result = {
+                'word': word,
+                'synonyms': synonyms[:15],  # Limit to 15 synonyms
+                'definitions': definitions
+            }
+        else:
+            # Process multiple words
+            result['input'] = input_text
+            result['words'] = []
+            
+            for word in words:
+                if word in STOP_WORDS or len(word) <= 1:
+                    continue  # Skip stop words and single characters
+                    
+                # Process each individual word
+                word_result = {
+                    'word': word,
+                    'synonyms': get_synonyms(word)[:10],  # Limit to 10 synonyms per word
+                    'definitions': get_definitions(word)
+                }
+                result['words'].append(word_result)
+            
+        logger.info(f"Total processing time for '{input_text}': {time.time() - start_time:.4f} seconds")
         
-        logger.info(f"Total processing time for '{word}': {time.time() - start_time:.4f} seconds")
-        
-        return jsonify({
-            'word': word,
-            'synonyms': synonyms[:15],  # Limit to 15 synonyms
-            'definitions': definitions
-        })
+        return jsonify(result)
     except Exception as e:
-        logger.error(f"Error processing word '{word}': {str(e)}")
+        logger.error(f"Error processing word '{input_text}': {str(e)}")
         return jsonify({'error': str(e)})
 
 if __name__ == '__main__':
