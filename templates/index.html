@@ -30,14 +30,15 @@
         <div class="results-container" id="resultsContainer">
             <div class="results-header">
                 <span id="searchedWord"></span>
-                <div class="tabs">
-                    <button class="tab active" data-tab="synonyms">Synonyms</button>
-                    <button class="tab" data-tab="context">Context Words</button>
-                </div>
             </div>
             
             <div class="results-content">
-                <div class="tab-content active" id="synonymsContent">
+                <!-- Synonyms Section -->
+                <div class="result-section" id="synonymsSection">
+                    <h3 class="section-title">
+                        <i class="fas fa-book"></i>
+                        Synonyms
+                    </h3>
                     <div class="loading-spinner" id="synonymsLoading">
                         <div class="spinner"></div>
                     </div>
@@ -48,7 +49,12 @@
                     </div>
                 </div>
                 
-                <div class="tab-content" id="contextContent">
+                <!-- Context Words Section -->
+                <div class="result-section" id="contextSection">
+                    <h3 class="section-title">
+                        <i class="fas fa-project-diagram"></i>
+                        Context Words
+                    </h3>
                     <div class="loading-spinner" id="contextLoading">
                         <div class="spinner"></div>
                     </div>

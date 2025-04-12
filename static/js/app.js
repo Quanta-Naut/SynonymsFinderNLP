@@ -3,8 +3,6 @@ const wordInput = document.getElementById('wordInput');
 const searchBtn = document.getElementById('searchBtn');
 const resultsContainer = document.getElementById('resultsContainer');
 const searchedWord = document.getElementById('searchedWord');
-const tabButtons = document.querySelectorAll('.tab');
-const tabContents = document.querySelectorAll('.tab-content');
 const synonymsList = document.getElementById('synonymsList');
 const contextList = document.getElementById('contextList');
 const synonymsLoading = document.getElementById('synonymsLoading');
@@ -65,15 +63,18 @@ function displayResults(data) {
         
         data.synonyms.forEach(word => {
             const li = document.createElement('li');
-            li.innerHTML = `
+            const wordRectangle = document.createElement('div');
+            wordRectangle.className = 'word-rectangle';
+            
+            wordRectangle.innerHTML = `
                 <span class="word">${word}</span>
-                <button class="copy-btn" title="Copy to Search">
-                    <i class="fas fa-search"></i>
-                </button>
+                <i class="fas fa-search search-icon"></i>
             `;
             
-            // Add event listener to copy the word to search input
-            li.querySelector('.copy-btn').addEventListener('click', () => {
+            li.appendChild(wordRectangle);
+            
+            // Add event listener to search for the word
+            li.addEventListener('click', () => {
                 wordInput.value = word;
                 searchSimilarWords(word);
             });
@@ -92,15 +93,18 @@ function displayResults(data) {
         
         data.context_words.forEach(word => {
             const li = document.createElement('li');
-            li.innerHTML = `
+            const wordRectangle = document.createElement('div');
+            wordRectangle.className = 'word-rectangle';
+            
+            wordRectangle.innerHTML = `
                 <span class="word">${word}</span>
-                <button class="copy-btn" title="Copy to Search">
-                    <i class="fas fa-search"></i>
-                </button>
+                <i class="fas fa-search search-icon"></i>
             `;
             
-            // Add event listener to copy the word to search input
-            li.querySelector('.copy-btn').addEventListener('click', () => {
+            li.appendChild(wordRectangle);
+            
+            // Add event listener to search for the word
+            li.addEventListener('click', () => {
                 wordInput.value = word;
                 searchSimilarWords(word);
             });
@@ -202,20 +206,4 @@ document.addEventListener('click', (e) => {
     if (e.target !== wordInput && e.target !== suggestions) {
         suggestions.style.display = 'none';
     }
-});
-
-// Tab switching functionality
-tabButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        // Remove active class from all tabs
-        tabButtons.forEach(btn => btn.classList.remove('active'));
-        tabContents.forEach(content => content.classList.remove('active'));
-        
-        // Add active class to clicked tab
-        button.classList.add('active');
-        
-        // Show corresponding tab content
-        const tabId = button.getAttribute('data-tab');
-        document.getElementById(`${tabId}Content`).classList.add('active');
-    });
 });
