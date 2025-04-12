@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NLP Similar Words Finder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>
+                <span class="gradient-text">Similar Words Finder</span>
+                <span class="subtitle">Powered by NLTK</span>
+            </h1>
+        </header>
+        
+        <div class="search-container">
+            <div class="input-group">
+                <input type="text" id="wordInput" placeholder="Enter a word..." autocomplete="off">
+                <button id="searchBtn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            <div class="floating-suggestions" id="suggestions"></div>
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <div class="results-header">
+                <span id="searchedWord"></span>
+                <div class="tabs">
+                    <button class="tab active" data-tab="synonyms">Synonyms</button>
+                    <button class="tab" data-tab="context">Context Words</button>
+                </div>
+            </div>
+            
+            <div class="results-content">
+                <div class="tab-content active" id="synonymsContent">
+                    <div class="loading-spinner" id="synonymsLoading">
+                        <div class="spinner"></div>
+                    </div>
+                    <ul id="synonymsList"></ul>
+                    <div class="empty-state" id="synonymsEmpty">
+                        <i class="far fa-sad-tear"></i>
+                        <p>No synonyms found</p>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="contextContent">
+                    <div class="loading-spinner" id="contextLoading">
+                        <div class="spinner"></div>
+                    </div>
+                    <ul id="contextList"></ul>
+                    <div class="empty-state" id="contextEmpty">
+                        <i class="far fa-sad-tear"></i>
+                        <p>No context words found</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="how-it-works">
+            <h2>How It Works</h2>
+            <div class="methods">
+                <div class="method">
+                    <div class="method-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h3>Synonyms</h3>
+                    <p>Using NLTK's WordNet to find words with similar meanings.</p>
+                </div>
+                <div class="method">
+                    <div class="method-icon">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <h3>Context</h3>
+                    <p>Using NLTK's Brown corpus to find words that appear in similar contexts.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Similar Words Finder | Built with <i class="fas fa-heart"></i> using Flask and NLTK</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
