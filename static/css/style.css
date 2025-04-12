@@ -88,6 +88,172 @@ h1 {
     box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.25);
 }
 
+/* Checkbox styling */
+.search-options {
+    margin-top: 0.75rem;
+    padding: 0 0.5rem;
+    position: relative;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    user-select: none;
+    position: relative;
+    padding-left: 30px;
+    transition: color 0.2s ease;
+}
+
+.checkbox-container:hover {
+    color: var(--text);
+}
+
+.checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 18px;
+    width: 18px;
+    background-color: rgba(108, 92, 231, 0.1);
+    border: 1px solid var(--primary-light);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 0 0 rgba(108, 92, 231, 0.3);
+}
+
+.checkbox-container:hover .checkmark {
+    background-color: rgba(108, 92, 231, 0.2);
+    box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.1);
+}
+
+.checkbox-container input:checked ~ .checkmark {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    transform: scale(1.05);
+}
+
+.checkbox-container input:checked:hover ~ .checkmark {
+    background-color: #5a4ad1;
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    animation: checkmark 0.2s ease-in-out;
+}
+
+@keyframes checkmark {
+    0% { opacity: 0; transform: rotate(45deg) scale(0.8); }
+    50% { opacity: 0.5; transform: rotate(45deg) scale(1.2); }
+    100% { opacity: 1; transform: rotate(45deg) scale(1); }
+}
+
+.checkbox-container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+/* Tooltip for checkbox */
+.checkbox-container .tooltip {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: calc(100% + 15px);
+    width: 280px;
+    background-color: var(--bg-card);
+    color: var(--text);
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    z-index: 100;
+    text-align: left;
+    font-size: 0.85rem;
+    border: 1px solid var(--primary-light);
+}
+
+.tooltip::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 100%;
+    border-width: 8px 0 8px 8px;
+    border-style: solid;
+    border-color: transparent transparent transparent var(--primary-light);
+}
+
+.checkbox-container:hover .tooltip {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Responsive tooltip */
+@media (max-width: 768px) {
+    .checkbox-container .tooltip {
+        width: 240px;
+        font-size: 0.8rem;
+        padding: 8px;
+    }
+    
+    .checkbox-container .tooltip ul {
+        padding-left: 1rem;
+    }
+    
+    .checkbox-container .tooltip li {
+        margin-bottom: 0.25rem;
+    }
+}
+
+/* For mobile devices - tooltip positioning adjustment */
+@media (max-width: 576px) {
+    .checkbox-container .tooltip {
+        width: 200px;
+        right: auto;
+        left: 0;
+        top: calc(100% + 15px);
+        bottom: auto;
+        transform: none;
+    }
+    
+    .tooltip::after {
+        bottom: auto;
+        top: -8px;
+        left: 15px;
+        transform: none;
+        border-width: 0 8px 8px 8px;
+        border-color: transparent transparent var(--primary-light) transparent;
+    }
+}
+
+/* For very small screens - further adjustments */
+@media (max-width: 360px) {
+    .checkbox-container .tooltip {
+        width: 180px;
+        font-size: 0.75rem;
+    }
+}
+
 input {
     flex: 1;
     padding: 1rem 1.25rem;
@@ -369,7 +535,6 @@ footer {
     background: var(--bg-card);
     color: var(--text-secondary);
     font-size: 0.9rem;
-    width: 100%;
 }
 
 .subtitle i {
@@ -837,4 +1002,117 @@ footer {
 #definitionsList .multi-word-results::-webkit-scrollbar-track {
     background-color: rgba(0, 0, 0, 0.2);
     border-radius: 3px;
+}
+
+/* Info icon for mobile */
+.info-icon {
+    display: none;
+    margin-left: 8px;
+    color: var(--primary-light);
+    cursor: pointer;
+    font-size: 1rem;
+    vertical-align: middle;
+}
+
+.info-icon i {
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.info-icon:active i {
+    transform: scale(1.2);
+    color: var(--secondary);
+}
+
+/* Info modal styling */
+.info-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.75);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-modal-content {
+    background-color: var(--bg-card);
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    animation: modal-appear 0.3s ease;
+}
+
+@keyframes modal-appear {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.info-modal-header {
+    padding: 15px 20px;
+    background: linear-gradient(45deg, var(--primary), var(--secondary));
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+}
+
+.info-modal-header h4 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.close-info {
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.info-modal-body {
+    padding: 15px 20px;
+    max-height: calc(90vh - 60px);
+    overflow-y: auto;
+}
+
+.info-modal-body p {
+    margin-bottom: 12px;
+}
+
+.info-modal-body ul {
+    display: block;
+    padding-left: 20px;
+    margin-bottom: 15px;
+}
+
+.info-modal-body li {
+    display: list-item;
+    list-style-type: disc;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* Show info icon on mobile only */
+@media (max-width: 768px) {
+    .info-icon {
+        display: inline-block;
+    }
+    
+    /* Hide tooltip on mobile since we have the info icon */
+    .checkbox-container .tooltip {
+        display: none;
+    }
 }

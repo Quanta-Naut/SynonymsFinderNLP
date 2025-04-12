@@ -53,10 +53,19 @@ def cache_result(cache_dict, max_size=1000):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(word, *args, **kwargs):
+            # Create a cache key that includes both the word and relevant parameters
             word_lower = word.lower()
-            if word_lower in cache_dict:
-                logger.info(f"Cache hit for '{word_lower}'")
-                return cache_dict[word_lower]
+            
+            # For get_synonyms function, include include_all_related in the cache key
+            if func.__name__ == 'get_synonyms':
+                include_all_related = kwargs.get('include_all_related', True)
+                cache_key = f"{word_lower}_{include_all_related}"
+            else:
+                cache_key = word_lower
+                
+            if cache_key in cache_dict:
+                logger.info(f"Cache hit for '{cache_key}'")
+                return cache_dict[cache_key]
             
             result = func(word, *args, **kwargs)
             
@@ -65,27 +74,44 @@ def cache_result(cache_dict, max_size=1000):
                 oldest_key = next(iter(cache_dict))
                 cache_dict.pop(oldest_key)
                 
-            cache_dict[word_lower] = result
+            cache_dict[cache_key] = result
             return result
         return wrapper
     return decorator
 
 @cache_result(synonym_cache)
-def get_synonyms(word):
+def get_synonyms(word, include_all_related=True):
     """Get synonyms for a given word using WordNet (cached)"""
     start_time = time.time()
     synonyms = set()
     
     # Get synonyms from all synsets
     for syn in wordnet.synsets(word)[:5]:  # Limit to first 5 synsets for speed
-        # Add lemma names (synonyms)
+        # Add lemma names (direct synonyms)
         for lemma in syn.lemmas():
             synonyms.add(lemma.name().replace('_', ' '))
         
-        # Add hypernyms (more general terms)
-        for hypernym in syn.hypernyms()[:3]:
-            for lemma in hypernym.lemmas():
-                synonyms.add(lemma.name().replace('_', ' '))
+        # Only include additional related words if requested
+        if include_all_related:
+            # Add hypernyms (more general terms)
+            for hypernym in syn.hypernyms()[:3]:
+                for lemma in hypernym.lemmas():
+                    synonyms.add(lemma.name().replace('_', ' '))
+                    
+            # Add hyponyms (more specific terms)
+            for hyponym in syn.hyponyms()[:3]:
+                for lemma in hyponym.lemmas():
+                    synonyms.add(lemma.name().replace('_', ' '))
+                    
+            # Add holonyms (whole-part relationships)
+            for holonym in syn.member_holonyms()[:2] + syn.part_holonyms()[:2]:
+                for lemma in holonym.lemmas():
+                    synonyms.add(lemma.name().replace('_', ' '))
+                    
+            # Add meronyms (part-whole relationships)
+            for meronym in syn.part_meronyms()[:2] + syn.member_meronyms()[:2]:
+                for lemma in meronym.lemmas():
+                    synonyms.add(lemma.name().replace('_', ' '))
     
     # Remove the original word from synonyms
     if word in synonyms:
@@ -148,6 +174,7 @@ def process():
     start_time = time.time()
     data = request.get_json()
     input_text = data.get('word', '').lower().strip()
+    include_all_related = data.get('includeAllRelated', True)
     
     if not input_text:
         return jsonify({'error': 'No word provided'})
@@ -161,7 +188,7 @@ def process():
         if len(words) == 1:
             word = words[0]
             # Get synonyms using WordNet (cached)
-            synonyms = get_synonyms(word)
+            synonyms = get_synonyms(word, include_all_related=include_all_related)
             
             # Get definitions using WordNet (cached)
             definitions = get_definitions(word)
@@ -183,7 +210,7 @@ def process():
                 # Process each individual word
                 word_result = {
                     'word': word,
-                    'synonyms': get_synonyms(word)[:10],  # Limit to 10 synonyms per word
+                    'synonyms': get_synonyms(word, include_all_related=include_all_related)[:10],  # Limit to 10 synonyms per word
                     'definitions': get_definitions(word)
                 }
                 result['words'].append(word_result)

@@ -29,6 +29,42 @@
                     <i class="fas fa-search"></i>
                 </button>
             </div>
+            <div class="search-options">
+                <label class="checkbox-container">
+                    <input type="checkbox" id="includeAllRelated" checked>
+                    <span class="checkmark"></span>
+                    <div class="tooltip">
+                        <strong>What this does:</strong> When checked, search results will include related words like:
+                        <ul>
+                            <li>Hypernyms - More general terms (e.g., "furniture" for "chair")</li>
+                            <li>Hyponyms - More specific terms (e.g., "apple" for "fruit")</li>
+                            <li>Holonyms - Whole-part relationships (e.g., "car" for "wheel")</li>
+                            <li>Meronyms - Part-whole relationships (e.g., "wheel" for "car")</li>
+                        </ul>
+                        When unchecked, only direct synonyms will be shown.
+                    </div>
+                    Include related words (hypernyms, hyponyms, etc.)
+                    <span class="info-icon" id="infoIcon"><i class="fas fa-info-circle"></i></span>
+                </label>
+                <div class="info-modal" id="infoModal">
+                    <div class="info-modal-content">
+                        <div class="info-modal-header">
+                            <h4>About Related Words</h4>
+                            <span class="close-info">&times;</span>
+                        </div>
+                        <div class="info-modal-body">
+                            <p><strong>When checked</strong>, search results will include:</p>
+                            <ul>
+                                <li><strong>Hypernyms</strong> - More general terms (e.g., "furniture" for "chair")</li>
+                                <li><strong>Hyponyms</strong> - More specific terms (e.g., "apple" for "fruit")</li>
+                                <li><strong>Holonyms</strong> - Whole-part relationships (e.g., "car" for "wheel")</li>
+                                <li><strong>Meronyms</strong> - Part-whole relationships (e.g., "wheel" for "car")</li>
+                            </ul>
+                            <p><strong>When unchecked</strong>, only direct synonyms will be shown.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="floating-suggestions" id="suggestions"></div>
         </div>
 

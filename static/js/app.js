@@ -11,6 +11,33 @@ const synonymsEmpty = document.getElementById('synonymsEmpty');
 const definitionsEmpty = document.getElementById('definitionsEmpty');
 const suggestions = document.getElementById('suggestions');
 const popupOverlay = document.getElementById('popup-overlay');
+const includeAllRelated = document.getElementById('includeAllRelated');
+const infoIcon = document.getElementById('infoIcon');
+const infoModal = document.getElementById('infoModal');
+const closeInfo = document.querySelector('.close-info');
+
+// Info icon click handling for mobile
+if(infoIcon) {
+    infoIcon.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        infoModal.style.display = 'flex';
+    });
+}
+
+// Close info modal when clicking the X
+if(closeInfo) {
+    closeInfo.addEventListener('click', function() {
+        infoModal.style.display = 'none';
+    });
+}
+
+// Close info modal when clicking outside the content
+window.addEventListener('click', function(e) {
+    if (infoModal.style.display === 'flex' && !e.target.closest('.info-modal-content') && e.target !== infoIcon) {
+        infoModal.style.display = 'none';
+    }
+});
 
 // Popup functionality
 const methodBoxes = document.querySelectorAll('.method');
@@ -99,7 +126,10 @@ async function searchSimilarWords(word) {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ word: word.trim() })
+            body: JSON.stringify({ 
+                word: word.trim(),
+                includeAllRelated: includeAllRelated.checked
+            })
         });
         
         const data = await response.json();
