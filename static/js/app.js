@@ -4,11 +4,11 @@ const searchBtn = document.getElementById('searchBtn');
 const resultsContainer = document.getElementById('resultsContainer');
 const searchedWord = document.getElementById('searchedWord');
 const synonymsList = document.getElementById('synonymsList');
-const contextList = document.getElementById('contextList');
+const definitionsList = document.getElementById('definitionsList');
 const synonymsLoading = document.getElementById('synonymsLoading');
-const contextLoading = document.getElementById('contextLoading');
+const definitionsLoading = document.getElementById('definitionsLoading');
 const synonymsEmpty = document.getElementById('synonymsEmpty');
-const contextEmpty = document.getElementById('contextEmpty');
+const definitionsEmpty = document.getElementById('definitionsEmpty');
 const suggestions = document.getElementById('suggestions');
 
 // Common English words for suggestions
@@ -19,7 +19,7 @@ const commonWords = [
     'easy', 'simple', 'complex', 'interesting', 'boring'
 ];
 
-// Function to search for similar words
+// Function to search for synonyms and definitions
 async function searchSimilarWords(word) {
     if (!word.trim()) return;
     
@@ -52,9 +52,44 @@ async function searchSimilarWords(word) {
 // Function to display results
 function displayResults(data) {
     resultsContainer.style.display = 'block';
-    searchedWord.textContent = `"${data.word}"`;
+    const word = data?.word || ""; // use the correct key name
+    searchedWord.textContent = `${word.charAt(0).toUpperCase()}${word.slice(1)}`;
     
     hideLoading();
+    
+    // Display definitions
+    if (data.definitions && data.definitions.length > 0) {
+        definitionsList.innerHTML = '';
+        definitionsEmpty.style.display = 'none';
+        
+        data.definitions.forEach(definition => {
+            const definitionItem = document.createElement('div');
+            definitionItem.className = 'definition-item';
+            
+            // Create HTML structure for the definition
+            let definitionHtml = '';
+            if (definition.pos) {
+                definitionHtml += `<div class="definition-pos">${definition.pos}</div>`;
+            }
+            
+            definitionHtml += `<div class="definition-text">${definition.text}</div>`;
+            
+            // Add examples if available
+            if (definition.examples && definition.examples.length > 0) {
+                definitionHtml += '<div class="definition-examples">';
+                definition.examples.forEach(example => {
+                    definitionHtml += `<div class="definition-example">${example}</div>`;
+                });
+                definitionHtml += '</div>';
+            }
+            
+            definitionItem.innerHTML = definitionHtml;
+            definitionsList.appendChild(definitionItem);
+        });
+    } else {
+        definitionsList.innerHTML = '';
+        definitionsEmpty.style.display = 'flex';
+    }
     
     // Display synonyms
     if (data.synonyms && data.synonyms.length > 0) {
@@ -85,56 +120,26 @@ function displayResults(data) {
         synonymsList.innerHTML = '';
         synonymsEmpty.style.display = 'flex';
     }
-    
-    // Display context words
-    if (data.context_words && data.context_words.length > 0) {
-        contextList.innerHTML = '';
-        contextEmpty.style.display = 'none';
-        
-        data.context_words.forEach(word => {
-            const li = document.createElement('li');
-            const wordRectangle = document.createElement('div');
-            wordRectangle.className = 'word-rectangle';
-            
-            wordRectangle.innerHTML = `
-                <span class="word">${word}</span>
-                <i class="fas fa-search search-icon"></i>
-            `;
-            
-            li.appendChild(wordRectangle);
-            
-            // Add event listener to search for the word
-            li.addEventListener('click', () => {
-                wordInput.value = word;
-                searchSimilarWords(word);
-            });
-            
-            contextList.appendChild(li);
-        });
-    } else {
-        contextList.innerHTML = '';
-        contextEmpty.style.display = 'flex';
-    }
 }
 
 // Show loading spinners
 function showLoading() {
     synonymsLoading.style.display = 'flex';
-    contextLoading.style.display = 'flex';
+    definitionsLoading.style.display = 'flex';
     synonymsEmpty.style.display = 'none';
-    contextEmpty.style.display = 'none';
+    definitionsEmpty.style.display = 'none';
 }
 
 // Hide loading spinners
 function hideLoading() {
     synonymsLoading.style.display = 'none';
-    contextLoading.style.display = 'none';
+    definitionsLoading.style.display = 'none';
 }
 
 // Hide results container
 function hideResults() {
     synonymsList.innerHTML = '';
-    contextList.innerHTML = '';
+    definitionsList.innerHTML = '';
 }
 
 // Show error message
@@ -143,10 +148,10 @@ function showError(message) {
     searchedWord.textContent = 'Error';
     
     synonymsEmpty.innerHTML = `<i class="fas fa-exclamation-circle"></i><p>${message}</p>`;
-    contextEmpty.innerHTML = `<i class="fas fa-exclamation-circle"></i><p>${message}</p>`;
+    definitionsEmpty.innerHTML = `<i class="fas fa-exclamation-circle"></i><p>${message}</p>`;
     
     synonymsEmpty.style.display = 'flex';
-    contextEmpty.style.display = 'flex';
+    definitionsEmpty.style.display = 'flex';
 }
 
 // Show word suggestions

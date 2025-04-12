@@ -12,7 +12,7 @@
     <div class="container">
         <header>
             <h1>
-                <span class="gradient-text">Similar Words Finder</span>
+                <span class="gradient-text">Synonyms Finder</span>
                 <span class="subtitle">Powered by NLTK</span>
             </h1>
         </header>
@@ -33,6 +33,22 @@
             </div>
             
             <div class="results-content">
+                <!-- Definitions Section -->
+                <div class="result-section" id="definitionsSection">
+                    <h3 class="section-title">
+                        <i class="fas fa-book-open"></i>
+                        Definitions
+                    </h3>
+                    <div class="loading-spinner" id="definitionsLoading">
+                        <div class="spinner"></div>
+                    </div>
+                    <div id="definitionsList"></div>
+                    <div class="empty-state" id="definitionsEmpty">
+                        <i class="far fa-sad-tear"></i>
+                        <p>No definitions found</p>
+                    </div>
+                </div>
+                
                 <!-- Synonyms Section -->
                 <div class="result-section" id="synonymsSection">
                     <h3 class="section-title">
@@ -48,22 +64,6 @@
                         <p>No synonyms found</p>
                     </div>
                 </div>
-                
-                <!-- Context Words Section -->
-                <div class="result-section" id="contextSection">
-                    <h3 class="section-title">
-                        <i class="fas fa-project-diagram"></i>
-                        Context Words
-                    </h3>
-                    <div class="loading-spinner" id="contextLoading">
-                        <div class="spinner"></div>
-                    </div>
-                    <ul id="contextList"></ul>
-                    <div class="empty-state" id="contextEmpty">
-                        <i class="far fa-sad-tear"></i>
-                        <p>No context words found</p>
-                    </div>
-                </div>
             </div>
         </div>
         
@@ -72,24 +72,24 @@
             <div class="methods">
                 <div class="method">
                     <div class="method-icon">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h3>Definitions</h3>
+                    <p>Using NLTK's WordNet to find meanings and examples.</p>
+                </div>
+                <div class="method">
+                    <div class="method-icon">
                         <i class="fas fa-book"></i>
                     </div>
                     <h3>Synonyms</h3>
                     <p>Using NLTK's WordNet to find words with similar meanings.</p>
-                </div>
-                <div class="method">
-                    <div class="method-icon">
-                        <i class="fas fa-project-diagram"></i>
-                    </div>
-                    <h3>Context</h3>
-                    <p>Using NLTK's Brown corpus to find words that appear in similar contexts.</p>
                 </div>
             </div>
         </div>
     </div>
 
     <footer>
-        <p>&copy; 2025 Similar Words Finder | Built with <i class="fas fa-heart"></i> using Flask and NLTK</p>
+        <p>&copy; 2025 Synonyms Finder | Built with <i class="fas fa-heart"></i> using Flask and NLTK</p>
     </footer>
 
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
