@@ -10,6 +10,73 @@ const definitionsLoading = document.getElementById('definitionsLoading');
 const synonymsEmpty = document.getElementById('synonymsEmpty');
 const definitionsEmpty = document.getElementById('definitionsEmpty');
 const suggestions = document.getElementById('suggestions');
+const popupOverlay = document.getElementById('popup-overlay');
+
+// Popup functionality
+const methodBoxes = document.querySelectorAll('.method');
+const closePopupBtns = document.querySelectorAll('.close-popup');
+
+// Function to open popup
+function openPopup(popupId) {
+    // Hide all popups first
+    document.querySelectorAll('.popup').forEach(popup => {
+        popup.style.display = 'none';
+        popup.classList.remove('active');
+    });
+    
+    // Show the selected popup
+    const popup = document.getElementById(popupId);
+    popup.style.display = 'block';
+    
+    // Show overlay
+    popupOverlay.classList.add('active');
+    
+    // Add a slight delay before adding the active class for animation
+    setTimeout(() => {
+        popup.classList.add('active');
+    }, 10);
+}
+
+// Function to close all popups
+function closePopups() {
+    document.querySelectorAll('.popup').forEach(popup => {
+        popup.classList.remove('active');
+    });
+    
+    popupOverlay.classList.remove('active');
+    
+    // Hide popups after animation completes
+    setTimeout(() => {
+        document.querySelectorAll('.popup').forEach(popup => {
+            popup.style.display = 'none';
+        });
+    }, 300);
+}
+
+// Set up event listeners for method boxes
+methodBoxes.forEach(box => {
+    box.addEventListener('click', function() {
+        const popupId = this.getAttribute('data-popup');
+        if (popupId) {
+            openPopup(popupId);
+        }
+    });
+});
+
+// Set up event listeners for close buttons
+closePopupBtns.forEach(btn => {
+    btn.addEventListener('click', closePopups);
+});
+
+// Close popups when clicking on overlay
+popupOverlay.addEventListener('click', closePopups);
+
+// Close popups on escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closePopups();
+    }
+});
 
 // Common English words for suggestions
 const commonWords = [

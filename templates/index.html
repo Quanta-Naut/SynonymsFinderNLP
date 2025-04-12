@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="NLP Similar Words Finder - Find synonyms and definitions for English words">
+    <meta name="theme-color" content="#121212">
     <title>NLP Similar Words Finder</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -13,7 +15,7 @@
         <header>
             <h1>
                 <span class="gradient-text">Synonyms Finder</span>
-                <span class="subtitle">Powered by NLTK</span>
+                <span class="subtitle">With <i class="fas fa-heart"></i> By Tarun</span>
             </h1>
         </header>
         
@@ -70,14 +72,14 @@
         <div class="how-it-works">
             <h2>How It Works</h2>
             <div class="methods">
-                <div class="method">
+                <div class="method" data-popup="definitions-popup">
                     <div class="method-icon">
                         <i class="fas fa-book-open"></i>
                     </div>
                     <h3>Definitions</h3>
                     <p>Using NLTK's WordNet to find meanings and examples.</p>
                 </div>
-                <div class="method">
+                <div class="method" data-popup="synonyms-popup">
                     <div class="method-icon">
                         <i class="fas fa-book"></i>
                     </div>
@@ -88,8 +90,135 @@
         </div>
     </div>
 
+    <!-- Popups -->
+    <div class="popup-overlay" id="popup-overlay"></div>
+    
+    <div class="popup" id="definitions-popup">
+        <div class="popup-header">
+            <h3><i class="fas fa-book-open"></i> How Definitions Work</h3>
+            <button class="close-popup"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="popup-content">
+            <h4>Understanding WordNet Definitions</h4>
+            <p>Our application uses Princeton's WordNet, a lexical database for the English language, to find definitions of words. Here's how it works:</p>
+            
+            <h5>1. Synsets (Synonym Sets)</h5>
+            <p>Each word in WordNet is organized into "synsets" or synonym sets, which are groups of words that share the same meaning in a particular context. A word can belong to multiple synsets if it has different meanings.</p>
+            
+            <h5>2. Parts of Speech</h5>
+            <p>Definitions are categorized by parts of speech:</p>
+            <ul>
+                <li><strong>Noun</strong> - Names of people, places, things, ideas</li>
+                <li><strong>Verb</strong> - Action or state words</li>
+                <li><strong>Adjective</strong> - Words that describe nouns</li>
+                <li><strong>Adverb</strong> - Words that modify verbs, adjectives, or other adverbs</li>
+            </ul>
+            
+            <h5>3. Definition Structure</h5>
+            <p>Each definition includes:</p>
+            <ul>
+                <li>The part of speech</li>
+                <li>The actual definition text</li>
+                <li>Example sentences (when available)</li>
+            </ul>
+            
+            <h5>4. Technical Implementation</h5>
+            <p>When you search for a word, our application:</p>
+            <ol>
+                <li>Queries WordNet for all synsets of the word</li>
+                <li>Extracts the definitions, parts of speech, and examples</li>
+                <li>Formats them in an easy-to-read structure</li>
+                <li>Presents up to 3 definitions for clarity</li>
+            </ol>
+            
+            <h5>5. Examples</h5>
+            <p>Example sentences are extracted directly from WordNet's corpus, showing how the word is used in context.</p>
+            
+            <div class="code-sample">
+                <pre><code>
+# Python code that powers the definitions
+def get_definitions(word):
+    definitions = []
+    for syn in wordnet.synsets(word):
+        pos = {'n': 'noun', 'v': 'verb', 'a': 'adjective',
+               's': 'adjective', 'r': 'adverb'}.get(syn.pos())
+        definitions.append({
+            'pos': pos,
+            'text': syn.definition(),
+            'examples': syn.examples()
+        })
+    return definitions
+                </code></pre>
+            </div>
+        </div>
+    </div>
+    
+    <div class="popup" id="synonyms-popup">
+        <div class="popup-header">
+            <h3><i class="fas fa-book"></i> How Synonyms Work</h3>
+            <button class="close-popup"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="popup-content">
+            <h4>Discovering Synonyms with WordNet</h4>
+            <p>Our application uses WordNet's rich lexical database to find synonyms and related words. Here's the process:</p>
+            
+            <h5>1. Synonym Extraction</h5>
+            <p>For each word you search, we:</p>
+            <ul>
+                <li>Find all the synsets (synonym sets) for that word</li>
+                <li>Extract all lemmas (base forms) from those synsets</li>
+                <li>Convert them to readable words by replacing underscores with spaces</li>
+            </ul>
+            
+            <h5>2. Semantic Relationships</h5>
+            <p>Beyond direct synonyms, we also explore:</p>
+            <ul>
+                <li><strong>Hypernyms</strong> - More general terms (e.g., "furniture" is a hypernym of "chair")</li>
+                <li><strong>Hyponyms</strong> - More specific terms (e.g., "apple" is a hyponym of "fruit")</li>
+                <li><strong>Holonyms</strong> - Whole-part relationships (e.g., "car" is a holonym of "wheel")</li>
+                <li><strong>Meronyms</strong> - Part-whole relationships (e.g., "wheel" is a meronym of "car")</li>
+            </ul>
+            
+            <h5>3. Stemming for Better Results</h5>
+            <p>If we find few synonyms, we apply basic stemming (removing common suffixes) to try alternative forms of the word.</p>
+            
+            <h5>4. Filtering and Ranking</h5>
+            <p>The synonyms are:</p>
+            <ul>
+                <li>Filtered to remove duplicates</li>
+                <li>Limited to 15 results for clarity</li>
+                <li>Presented in a user-friendly, clickable format</li>
+            </ul>
+            
+            <h5>5. Technical Implementation</h5>
+            <div class="code-sample">
+                <pre><code>
+# Python code that powers synonym finding
+def get_synonyms(word):
+    synonyms = set()
+    # Get synonyms from all synsets
+    for syn in wordnet.synsets(word):
+        # Add direct synonyms
+        for lemma in syn.lemmas():
+            synonyms.add(lemma.name().replace('_', ' '))
+        
+        # Add hypernyms (more general terms)
+        for hypernym in syn.hypernyms():
+            for lemma in hypernym.lemmas():
+                synonyms.add(lemma.name().replace('_', ' '))
+    
+    # Remove the original word
+    if word in synonyms:
+        synonyms.remove(word)
+        
+    return list(synonyms)
+                </code></pre>
+            </div>
+        </div>
+    </div>
+
     <footer>
-        <p>&copy; 2025 Synonyms Finder | Built with <i class="fas fa-heart"></i> using Flask and NLTK</p>
+        <p>&copy; 2025 Synonyms Finder | Developed by <b>Tarun</b> | Built using Flask and NLTK</p>
     </footer>
 
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
